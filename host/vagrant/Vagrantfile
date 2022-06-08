@@ -142,7 +142,7 @@ vconfig['vagrant_cluster_vm_names'].each do |i|
       v.cpus = vconfig['vagrant_cpus']
       v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       v.customize ["modifyvm", :id, "--ioapic", "on"]
-      # v.gui=vconfig['oah_vm_gui']
+      v.gui=vconfig['oah_vm_gui']
     end
       # config.vm.define vconfig['vagrant_machine_name'] do |d|
       config.vm.define "#{i}" do |d|
