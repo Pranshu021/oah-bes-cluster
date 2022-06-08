@@ -83,8 +83,9 @@ sudo systemctl disable apt-daily.timer
 SCRIPT
 
 i = 0
-while i < vconfig['no_of_vms']
-	Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+	while i < vconfig['no_of_vms']
 		config.vm.hostname = "oah-bes-vm#{i}"
 		if vconfig['vagrant_ip'] == "0.0.0.0" && Vagrant.has_plugin?("vagrant-auto_network")
 			config.vm.network :private_network, :ip => vconfig['vagrant_ip'], :auto_network => true
@@ -147,8 +148,10 @@ while i < vconfig['no_of_vms']
 			# config.vm.define vconfig['vagrant_machine_name'] do |d|
 			config.vm.define "oah-bes-vm#{i}" do |d|
 		end
+		i += 1
 	end
 end
+
 
 # ================== ORIGINAL CODE ========================
 # Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
