@@ -81,10 +81,10 @@ test -e /usr/bin/python || (sudo apt -y update && apt install -y python-minimal)
 sudo systemctl disable apt-daily.service
 sudo systemctl disable apt-daily.timer
 SCRIPT
-['oah-bes-cluster-vm1','oah-bes-cluster-vm2','oah-bes-cluster-vm3'].each_with_index do |i|
+(1..3).each do |i|
   Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     puts "CURRENT VM : #{i}"
-    config.vm.hostname = "#{i}"
+    config.vm.hostname = "oah-bes-vm#{i}"
     if vconfig['vagrant_ip'] == "0.0.0.0" && Vagrant.has_plugin?("vagrant-auto_network")
       config.vm.network :private_network, :ip => vconfig['vagrant_ip'], :auto_network => true
     else
@@ -136,7 +136,7 @@ SCRIPT
     # VirtualBox.
     config.vm.provider :virtualbox do |v|
       # v.name = vconfig['vagrant_hostname']
-      v.name = "#{i}"
+      v.name = "oah-bes-vm#{i}"
       v.memory = vconfig['vagrant_memory']
       v.cpus = vconfig['vagrant_cpus']
       v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
@@ -144,8 +144,7 @@ SCRIPT
       v.gui=vconfig['oah_vm_gui']
     end
       # config.vm.define vconfig['vagrant_machine_name'] do |d|
-      puts "Creating VM #{i}"
-      config.vm.define "#{i}" do |d|
+      config.vm.define "oah-bes-vm#{i}" do |d|
     end
   end
 end
