@@ -83,8 +83,8 @@ sudo systemctl disable apt-daily.timer
 SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  puts "CURRENT VM : #{i}"
-  config.vm.hostname = "oah-bes-vm#{i}"
+  # puts "CURRENT VM : #{i}"
+  config.vm.hostname = vconfig['oah_env_name']
   if vconfig['vagrant_ip'] == "0.0.0.0" && Vagrant.has_plugin?("vagrant-auto_network")
     config.vm.network :private_network, :ip => vconfig['vagrant_ip'], :auto_network => true
   else
@@ -136,7 +136,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # VirtualBox.
   config.vm.provider :virtualbox do |v|
     # v.name = vconfig['vagrant_hostname']
-    v.name = "oah-bes-vm#{i}"
+    v.name = vconfig['oah_env_name']
     v.memory = vconfig['vagrant_memory']
     v.cpus = vconfig['vagrant_cpus']
     v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
