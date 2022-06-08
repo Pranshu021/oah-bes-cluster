@@ -81,10 +81,9 @@ test -e /usr/bin/python || (sudo apt -y update && apt install -y python-minimal)
 sudo systemctl disable apt-daily.service
 sudo systemctl disable apt-daily.timer
 SCRIPT
-
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  vconfig['vagrant_cluster_vm_names'].each_with_index do |i|
-    # puts "Creating VM #{i}"
+['oah-bes-cluster-vm1','oah-bes-cluster-vm2','oah-bes-cluster-vm3'].each_with_index do |i|
+  Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    puts "CURRENT VM : #{i}"
     config.vm.hostname = "#{i}"
     if vconfig['vagrant_ip'] == "0.0.0.0" && Vagrant.has_plugin?("vagrant-auto_network")
       config.vm.network :private_network, :ip => vconfig['vagrant_ip'], :auto_network => true
