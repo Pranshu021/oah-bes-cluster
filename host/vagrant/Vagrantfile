@@ -144,6 +144,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.gui=vconfig['oah_vm_gui']
   end
     config.vm.define vconfig['vagrant_machine_name'] do |d|
+  end
 end
 
   # vconfig['vagrant_cluster_vm_names'].each do |i|
