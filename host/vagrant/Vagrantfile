@@ -82,75 +82,135 @@ sudo systemctl disable apt-daily.service
 sudo systemctl disable apt-daily.timer
 SCRIPT
 
-
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.hostname = vconfig['vagrant_hostname']
-  if vconfig['vagrant_ip'] == "0.0.0.0" && Vagrant.has_plugin?("vagrant-auto_network")
-    config.vm.network :private_network, :ip => vconfig['vagrant_ip'], :auto_network => true
-  else
-    config.vm.network :private_network, ip: vconfig['vagrant_ip']
-  end
-
-  if !vconfig['vagrant_public_ip'].empty? && vconfig['vagrant_public_ip'] == "0.0.0.0"
-    config.vm.network :public_network
-  elsif !vconfig['vagrant_public_ip'].empty?
-    config.vm.network :public_network, ip: vconfig['vagrant_public_ip']
-  end
-
-  Vagrant.configure("2") do |config|
-    config.ssh.insert_key = true
-    config.ssh.private_key_path = "~/.ssh/id_rsa"
-    config.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
-    config.ssh.forward_agent = true
-    config.ssh.username = vconfig['vagrant_user']
-  end
-
-  #config.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
-
-  config.vm.box = vconfig['vagrant_box']
-
-  for synced_folder in vconfig['vagrant_synced_folders'];
-    config.vm.synced_folder synced_folder['local_path'], synced_folder['destination'],
-      type: synced_folder['type'],
-      rsync__auto: "true",
-      rsync__exclude: synced_folder['excluded_paths'],
-      rsync__args: ["--verbose", "--archive", "--delete", "-z", "--chmod=ugo=rwX"],
-      id: synced_folder['id'],
-      create: synced_folder.include?('create') ? synced_folder['create'] : false,
-      mount_options: synced_folder.include?('mount_options') ? synced_folder['mount_options'] : []
-  end
-  
-  
-  if which('ansible-playbook')
-    # Provision using Ansible provisioner if Ansible is installed on host.
-    config.vm.provision "shell", inline: $script
-    config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "#{dir}/provisioning/oah-install.yml"
-      ansible.galaxy_role_file = "../../provisioning/oah-requirements.yml"
-      ansible.become = true                                                                                                                
+vconfig['vagrant_cluster_vm_names'].each do |i|
+  Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+    config.vm.hostname = "#{i}"
+    if vconfig['vagrant_ip'] == "0.0.0.0" && Vagrant.has_plugin?("vagrant-auto_network")
+      config.vm.network :private_network, :ip => vconfig['vagrant_ip'], :auto_network => true
+    else
+      config.vm.network :private_network, ip: vconfig['vagrant_ip']
     end
-  else
-     config.vm.provision "shell", inline: $script_local_ansible, env: { "VHOME" => "/home/vagrant", "env_repo_name" => ENV['env_repo_name'], "OAH_DIR" => ENV['OAH_DIR'], "OAH_GITHUB_URL" => ENV['OAH_GITHUB_URL'] } 
-  end
+
+    if !vconfig['vagrant_public_ip'].empty? && vconfig['vagrant_public_ip'] == "0.0.0.0"
+      config.vm.network :public_network
+    elsif !vconfig['vagrant_public_ip'].empty?
+      config.vm.network :public_network, ip: vconfig['vagrant_public_ip']
+    end
+
+    Vagrant.configure("2") do |config|
+      config.ssh.insert_key = true
+      config.ssh.private_key_path = "~/.ssh/id_rsa"
+      config.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
+      config.ssh.forward_agent = true
+      config.ssh.username = vconfig['vagrant_user']
+    end
+
+    #config.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
+
+    config.vm.box = vconfig['vagrant_box']
+
+    for synced_folder in vconfig['vagrant_synced_folders'];
+      config.vm.synced_folder synced_folder['local_path'], synced_folder['destination'],
+        type: synced_folder['type'],
+        rsync__auto: "true",
+        rsync__exclude: synced_folder['excluded_paths'],
+        rsync__args: ["--verbose", "--archive", "--delete", "-z", "--chmod=ugo=rwX"],
+        id: synced_folder['id'],
+        create: synced_folder.include?('create') ? synced_folder['create'] : false,
+        mount_options: synced_folder.include?('mount_options') ? synced_folder['mount_options'] : []
+    end
+    
+    
+    if which('ansible-playbook')
+      # Provision using Ansible provisioner if Ansible is installed on host.
+      config.vm.provision "shell", inline: $script
+      config.vm.provision "ansible" do |ansible|
+        ansible.playbook = "#{dir}/provisioning/oah-install.yml"
+        ansible.galaxy_role_file = "../../provisioning/oah-requirements.yml"
+        ansible.become = true                                                                                                                
+      end
+    else
+      config.vm.provision "shell", inline: $script_local_ansible, env: { "VHOME" => "/home/vagrant", "env_repo_name" => ENV['env_repo_name'], "OAH_DIR" => ENV['OAH_DIR'], "OAH_GITHUB_URL" => ENV['OAH_GITHUB_URL'] } 
+    end
 
 
-  # VirtualBox.
-  config.vm.provider :virtualbox do |v|
-    v.name = vconfig['vagrant_hostname']
-    v.memory = vconfig['vagrant_memory']
-    v.cpus = vconfig['vagrant_cpus']
-    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-    v.customize ["modifyvm", :id, "--ioapic", "on"]
-    v.gui=vconfig['oah_vm_gui']
-  end
-    config.vm.define vconfig['vagrant_machine_name'] do |d|
+    # VirtualBox.
+    config.vm.provider :virtualbox do |v|
+      v.name = vconfig['vagrant_hostname']
+      v.memory = vconfig['vagrant_memory']
+      v.cpus = vconfig['vagrant_cpus']
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      v.customize ["modifyvm", :id, "--ioapic", "on"]
+      v.gui=vconfig['oah_vm_gui']
+    end
+      # config.vm.define vconfig['vagrant_machine_name'] do |d|
+      config.vm.define "#{i}" do |d|
+    end
   end
 end
 
-  # vconfig['vagrant_cluster_vm_names'].each do |i|
-  #   config.vm.define "#{i}" do |d|
-  #     # node.vm.box = "hashicorp/bionic64"
-  #     # node.vm.box_url = "https://vagrantcloud.com/hashicorp/bionic64"
-  #   end
-  # end
+# ================== ORIGINAL CODE ========================
+# Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+#   config.vm.hostname = vconfig['vagrant_cluster_vm_names']
+#   if vconfig['vagrant_ip'] == "0.0.0.0" && Vagrant.has_plugin?("vagrant-auto_network")
+#     config.vm.network :private_network, :ip => vconfig['vagrant_ip'], :auto_network => true
+#   else
+#     config.vm.network :private_network, ip: vconfig['vagrant_ip']
+#   end
+
+#   if !vconfig['vagrant_public_ip'].empty? && vconfig['vagrant_public_ip'] == "0.0.0.0"
+#     config.vm.network :public_network
+#   elsif !vconfig['vagrant_public_ip'].empty?
+#     config.vm.network :public_network, ip: vconfig['vagrant_public_ip']
+#   end
+
+#   Vagrant.configure("2") do |config|
+#     config.ssh.insert_key = true
+#     config.ssh.private_key_path = "~/.ssh/id_rsa"
+#     config.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
+#     config.ssh.forward_agent = true
+#     config.ssh.username = vconfig['vagrant_user']
+#   end
+
+#   #config.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
+
+#   config.vm.box = vconfig['vagrant_box']
+
+#   for synced_folder in vconfig['vagrant_synced_folders'];
+#     config.vm.synced_folder synced_folder['local_path'], synced_folder['destination'],
+#       type: synced_folder['type'],
+#       rsync__auto: "true",
+#       rsync__exclude: synced_folder['excluded_paths'],
+#       rsync__args: ["--verbose", "--archive", "--delete", "-z", "--chmod=ugo=rwX"],
+#       id: synced_folder['id'],
+#       create: synced_folder.include?('create') ? synced_folder['create'] : false,
+#       mount_options: synced_folder.include?('mount_options') ? synced_folder['mount_options'] : []
+#   end
+  
+  
+#   if which('ansible-playbook')
+#     # Provision using Ansible provisioner if Ansible is installed on host.
+#     config.vm.provision "shell", inline: $script
+#     config.vm.provision "ansible" do |ansible|
+#       ansible.playbook = "#{dir}/provisioning/oah-install.yml"
+#       ansible.galaxy_role_file = "../../provisioning/oah-requirements.yml"
+#       ansible.become = true                                                                                                                
+#     end
+#   else
+#     config.vm.provision "shell", inline: $script_local_ansible, env: { "VHOME" => "/home/vagrant", "env_repo_name" => ENV['env_repo_name'], "OAH_DIR" => ENV['OAH_DIR'], "OAH_GITHUB_URL" => ENV['OAH_GITHUB_URL'] } 
+#   end
+
+
+#   # VirtualBox.
+#   config.vm.provider :virtualbox do |v|
+#     v.name = vconfig['vagrant_hostname']
+#     v.memory = vconfig['vagrant_memory']
+#     v.cpus = vconfig['vagrant_cpus']
+#     v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+#     v.customize ["modifyvm", :id, "--ioapic", "on"]
+#     v.gui=vconfig['oah_vm_gui']
+#   end
+#     config.vm.define vconfig['vagrant_machine_name'] do |d|
+#   end
+# end
 
