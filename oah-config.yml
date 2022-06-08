@@ -22,7 +22,7 @@ vagrant_ip: 0.0.0.0
 vagrant_public_ip: ""
 
 vagrant_synced_folders: []
-vagrant_memory: 1536
+vagrant_memory: 1024
 vagrant_cpus: 1 
 
 oahvm_cron_jobs: []
