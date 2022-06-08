@@ -137,8 +137,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
 		# VirtualBox.
 		config.vm.provider :virtualbox do |v|
-			# v.name = vconfig['vagrant_hostname']
-			v.name = "oah-bes-vm#{i}"
+			# v.name = "oah-bes-vm#{i}"
 			v.memory = vconfig['vagrant_memory']
 			v.cpus = vconfig['vagrant_cpus']
 			v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
