@@ -84,6 +84,7 @@ SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vconfig['vagrant_cluster_vm_names'].each do |i|
+    puts "Creating VM #{i}"
     config.vm.hostname = "#{i}"
     if vconfig['vagrant_ip'] == "0.0.0.0" && Vagrant.has_plugin?("vagrant-auto_network")
       config.vm.network :private_network, :ip => vconfig['vagrant_ip'], :auto_network => true
