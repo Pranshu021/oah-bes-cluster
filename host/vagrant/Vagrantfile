@@ -81,9 +81,8 @@ test -e /usr/bin/python || (sudo apt -y update && apt install -y python-minimal)
 sudo systemctl disable apt-daily.service
 sudo systemctl disable apt-daily.timer
 SCRIPT
-
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  vconfig['vagrant_cluster_vm_names'].each do |i|
+vconfig['vagrant_cluster_vm_names'].each do |i|
+  Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # puts "Creating VM #{i}"
     config.vm.hostname = "#{i}"
     if vconfig['vagrant_ip'] == "0.0.0.0" && Vagrant.has_plugin?("vagrant-auto_network")
@@ -133,7 +132,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     else
       config.vm.provision "shell", inline: $script_local_ansible, env: { "VHOME" => "/home/vagrant", "env_repo_name" => ENV['env_repo_name'], "OAH_DIR" => ENV['OAH_DIR'], "OAH_GITHUB_URL" => ENV['OAH_GITHUB_URL'] } 
     end
-
 
     # VirtualBox.
     config.vm.provider :virtualbox do |v|
