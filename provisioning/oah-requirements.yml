@@ -21,8 +21,8 @@
 #   version: main
 #   name: oah.desktop
 
-- src: https://github.com/asa1997/ansible-role-oah-desktop
-  version: master
+- src: https://github.com/Pranshu021/ansible-role-oah-desktop
+  version: main
   name: oah.desktop
 
 - src: https://github.com/Be-Secure/ansible-role-oah-vscode
