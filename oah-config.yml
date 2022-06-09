@@ -18,7 +18,6 @@ vagrant_hostname: oah-bes-vm.dev
 vagrant_machine_name: oah-bes-vm
 #vagrant_ip: 192.168.88.88
 vagrant_ip: 0.0.0.0
-no_of_vms: 3
 
 vagrant_public_ip: ""
 
