@@ -105,6 +105,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			config.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
 			config.ssh.forward_agent = true
 			config.ssh.username = vconfig['vagrant_user']
+			config.ssh.connection_timeout = 120
 		end
 
 		#config.ssh.private_key_path = ['~/.vagrant.d/insecure_private_key', '~/.ssh/id_rsa']
