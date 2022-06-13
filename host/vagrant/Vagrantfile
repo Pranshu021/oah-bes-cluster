@@ -89,6 +89,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 		config.vm.hostname = "oah-bes-vm#{i}"
 		config.vm.boot_timeout = 1200
 		if vconfig['vagrant_ip'] == "0.0.0.0" && Vagrant.has_plugin?("vagrant-auto_network")
+			puts "======Inside private networking and using vagrant-auto_network plugin ======"
 			config.vm.network :private_network, :ip => vconfig['vagrant_ip'], :auto_network => true
 		else
 			config.vm.network :private_network, ip: vconfig['vagrant_ip']
