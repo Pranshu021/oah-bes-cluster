@@ -1,15 +1,15 @@
 ---
-oah_env_name: oah-bes-vm
+# oah_env_name: oah-bes-vm
 oah_vm_gui: true
 vagrant_box: "hashicorp/bionic64"
 vagrant_user: vagrant
 oah_env_user: vagrant
 oah_user: oahdev
-vagrant_hostname: oah-bes-vm.dev
-vagrant_machine_name: oah-bes-vm
+# vagrant_hostname: oah-bes-vm.dev
+# vagrant_machine_name: oah-bes-vm
 vagrant_ip: 0.0.0.0
 vagrant_public_ip: ""
 vagrant_synced_folders: []
-vagrant_memory: 2048
+vagrant_memory: 1024
 vagrant_cpus: 1 
 oahvm_cron_jobs: []
