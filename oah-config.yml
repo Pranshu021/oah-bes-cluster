@@ -13,3 +13,4 @@ vagrant_synced_folders: []
 vagrant_memory: 1024
 vagrant_cpus: 1 
 oahvm_cron_jobs: []
+vagrant_box_url: "https://vagrantcloud.com/hashicorp/bionic64"
